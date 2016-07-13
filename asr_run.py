@@ -28,6 +28,7 @@ def get_info(video, video_name, video_dir):
 	a = p.wait()
 	(stdoutput, erroutput) = p.communicate()
 	stdoutput = stdoutput.decode('utf-8').split('\n')[0]
+	print(stdoutput)
 	return stdoutput
 
 def dump_wav(video, video_name, video_dir, sound_dir):
@@ -65,7 +66,7 @@ def asr_run(sound, sound_name, txt_dir, log_dir, duration, start_time):
 
 	end_time = time.time()
 	f2 = open(log_dir + sound_name+'.log', 'w')
-	f2.write(duration)
+	f2.write(duration+'\n')
 	f2.write('Time cost: '+str(end_time - start_time)+'s\n')
 	f2.write(stdoutput)
 	f2.close()
