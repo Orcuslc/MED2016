@@ -63,7 +63,7 @@ def noise_reduction(sound, freq_low = 499, freq_high = 3501, op = segment_bandpa
 
 
 def continuous_bandpass_filter(left, right, freq_low, freq_high, framerate):
-	pass_region = [0.075, 0.75]
+	pass_region = [0.075, 0.2]
 	stop_region = [0.05, 0.8]
 	pass_max_damp = 1
 	stop_min_damp = 80
