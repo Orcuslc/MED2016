@@ -2,6 +2,7 @@ import os
 import sys
 import subprocess
 from change_freq import change_frequency
+from filt import *
 import re
 import time
 
@@ -28,6 +29,7 @@ def get_info(video, video_name, video_dir):
 	a = p.wait()
 	(stdoutput, erroutput) = p.communicate()
 	stdoutput = stdoutput.decode('utf-8').split('\n')[0]
+	print(stdoutput)
 	return stdoutput
 
 def dump_wav(video, video_name, video_dir, sound_dir):
@@ -36,7 +38,10 @@ def dump_wav(video, video_name, video_dir, sound_dir):
 	a = p.wait()
 	(stdoutput, erroutput) = p.communicate()
 	print(video_name + ' dump succeeded!')
-	return sound_dir + video_name + '.wav'
+	sound = sound_dir + video_name + '.wav'
+	sound_filter(sound, [300, 1000], [200, 2000], set_eq)
+	print(video_name + ' filting succeeded!')
+	return sound
 
 def asr_run(sound, sound_name, txt_dir, log_dir, duration, start_time):
 	# change_frequency(sound, framerate)
@@ -65,10 +70,14 @@ def asr_run(sound, sound_name, txt_dir, log_dir, duration, start_time):
 
 	end_time = time.time()
 	f2 = open(log_dir + sound_name+'.log', 'w')
-	f2.write(duration)
+	f2.write(duration+'\n')
 	f2.write('Time cost: '+str(end_time - start_time)+'s\n')
 	f2.write(stdoutput)
 	f2.close()
+
+	delete_command = 'rm -f '+ sound
+	p2 = subprocess.Popen(delete_command, shell=True)
+	b = p2.wait()
 	print(sound_name + ' Completed!')
 
 @timeit
@@ -77,6 +86,7 @@ def run(video, video_name, video_dir, sound_dir, txt_dir, log_dir):
 	duration = get_info(video, video_name, video_dir)
 	sound = dump_wav(video, video_name, video_dir, sound_dir)
 	asr_run(sound, video_name, txt_dir, log_dir, duration, start_time)
+	return duration
 
 
 if __name__ == '__main__':
@@ -84,5 +94,5 @@ if __name__ == '__main__':
 	sound_name = sys.argv[2]
 	txt_dir = sys.argv[3]
 	log_dir = sys.argv[4]
-	asr_run(sound, sound_name, txt_dir, log_dir)
+	asr_run(sound, sound_name, txt_dir, log_dir, duration='1',  start_time=1)
 
