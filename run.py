@@ -22,7 +22,7 @@ total_minute = 0
 total_second = 0
 
 file_list = np.load(file_list).tolist()
-file_amount = len(files)
+file_amount = len(file_list)
 
 avg = int(file_amount/11)
 if index != 10:
