@@ -1,0 +1,28 @@
+dev1: training-1(y), training-2(later), about 9500, test1(2)(y) (13000)
+dev2: test-1(1)(y), 13730
+dev2(y), dev3(y, 跑的是dev4的), dev4(y, 跑的是Dev3的), dev5(y), dev6(y), dev7(y), dev8(y), dev9(y), dev11, dev15: test3(1-10), 95298, each 9530 : dev11,15 出问题了。
+dev3, dev4, dev5, dev6, dev7, dev8,dev9, dev11, dev15: test2(1-9), about 95000
+
+
+training - 1 在跑
+training - 2 wait
+test - 1 在跑
+test - 2 在dump
+test - 3 在跑
+
+
+
+test-3 : run9, run10 尚未分配
+
+配置:
+dev1 - imc1 - ok - ok
+dev2 - imc2 - ok - ok
+dev3 - imc4 - ok - ok
+dev4 - imc5 - ok - ok
+dev5 - imc6 - ok - ok
+dev6 - imc7 - ok - ok
+dev7 - imc8 - ok - ok
+dev8 - imc9 - ok - ok
+dev9 - imc10 - ok - ok
+dev11 - bigvid01 - ok
+dev15 - bigvid05 - ok

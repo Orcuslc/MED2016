@@ -1,0 +1,16 @@
+# README
+
+1. Installing kaldi:
+	1.1 git clone github.com/kaldi-asr/kaldi.git
+	1.2 go to /tools, follow the instructions there.
+	1.3 go to /src, follow the instructions there.
+	1.4 go to /src/cudamatrix, change the TESTFILES to BINFILES, then make all.
+
+2. Revise the path:
+	2.1 Go to scripts/asr_run.py, revise kaldi_dir, nnet, graph to where you place kaldi, nnet_a_gpu_online and graph respectively.
+	2.2 Go to scripts/run.py, revise video_dir to the DATA-files folder, txt_dir to where you want the RESULTS be, sound_dir and log_dir to the place for sound and log respectively.
+
+2. Usage:
+	Go to scripts/, 
+		python3 run.py ROOT/TO/THE/DATASET.
+	The result should be in the txt folder set up above, LOG files in the log folder, and the .wav files dumped from videos in the sound folder.
