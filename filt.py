@@ -23,6 +23,7 @@ def sound_filter(sound, pass_region, stop_region, op):
 	left_channel = wave_data[0]
 	wave_length = left_channel.size
 	right_channel = wave_data[1]
+	# if len(left_channel) == 0 or len(right_channe)
 
 	#plt.subplot(221)
 	#plt.plot(time, left_channel)
@@ -75,48 +76,84 @@ def fft_bandpass_filter(left_channel, right_channel, pass_region, stop_region, f
 	right_channel = np.fft.ifft(right_channel)
 	return left_channel, right_channel
 
-def set_eq(left_channel, right_channel, pass_region, stop_region, framerate):	
-	'''We use the EQ set by NETEASE MUSIC, and we use ORDER-3 D1 SPLINE INTERPOLATION to simulate the filter function:
-		f(250)=f'(250)=0;
-		f(1000)=f'(1000)=0;
-		f(500)=1,f'(500)=0'''
-	'''We start with a linear transform of x'''
-	'''The solution of the problem is:
-		f1(x) = -2x^3+9x^2-12x+5, x = x0/250, 250<=x0<=500;
-		f2(x) = 3/4x^3-9/4x^2+6x-4, x = 0/250, 500<=x0<=1000.
-	'''
-	left_frequency = np.fft.fft(left_channel)
-	right_frequency = np.fft.fft(right_channel)
-	abs_left = abs(left_frequency)
-	abs_right = abs(right_frequency)
-	length = left_channel.size
-	freq = lambda i: i*framerate/(length*2)
-	index = lambda freq: int(2*length/framerate*freq)
-	#f1 = lambda x: 0.4*(-2*(x**3)+9*(x**2)-12*x+5)
-	#f2 = lambda x: 0.4*(0.75*(x**3)-2.25*(x**2)+6*x-4)
-
+def set_eq(left, right, p_r, s_r, framerate):
 	rate1 = 1
 	rate2 = 0.8
+	rate3 = (2-2*rate2)
+	try:
+		left_freq = np.fft.fft(left) * rate2
+		right_freq = np.fft.fft(right) * rate2
+	except ValueError:
+		return left, right
+	length = left.size
+	# print(length)
 
-	f1 = lambda x: rate1*(0.5*np.sin(np.pi*(x-1.5)) + 0.5)
-	f2 = lambda x: rate1*(0.5*np.sin(0.5*np.pi*(x-1)) + 0.5)
+	f1 = np.vectorize(lambda x: rate1*(0.5*np.sin(np.pi*(x-1.5)) + 0.5))
+	f2 = np.vectorize(lambda x: rate1*(0.5*np.sin(0.5*np.pi*(x-1)) + 0.5))
+	freq = np.vectorize(lambda i: i*framerate/(length*2))
+	index = lambda freq: int(2*length/framerate*freq)
 
 	x250 = index(250)
 	x500 = index(500)
 	x1000 = index(1000)
 
-	left_frequency = left_frequency * rate2
-	right_frequency = right_frequency * rate2
+	xx1 = f1(np.asarray(range(x250, x500))*framerate/(length*2)/250)
+	# xx1 = f1(freq(np.asarray(range(x250, x500))/250))
+	# xx2 = f2(freq(np.asarray(range(x500, x1000))/250))
+	xx2 = f2(np.asarray(range(x500, x1000))*framerate/(length*2)/250)
 
-	left_frequency[x250:x500] = [left_frequency[i]*(1+(2-2*rate2)*f1(freq(i)/250)) for i in range(x250, x500)]
-	right_frequency[x250:x500] = [right_frequency[i]*(1+(2-2*rate2)*f1(freq(i)/250)) for i in range(x250, x500)]
-	left_frequency[x500:x1000] = [left_frequency[i]*(1+(2-2*rate2)*f2(freq(i)/250)) for i in range(x500, x1000)]
-	right_frequency[x500:x1000] = [right_frequency[i]*(1+(2-2*rate2)*f2(freq(i)/250)) for i in range(x500, x1000)]
+	left_freq[x250:x500] = left_freq[x250:x500] * (1+rate3*xx1)
+	right_freq[x250:x500] = right_freq[x250:x500] * (1+rate3*xx1)
+	left_freq[x500:x1000] = left_freq[x500:x1000] * (1+rate3*xx2)
+	right_freq[x500:x1000] = right_freq[x500:x1000] * (1+rate3*xx2)
 
-	left_channel = np.fft.ifft(left_frequency)
-	right_channel = np.fft.ifft(right_frequency)
+	left = np.fft.ifft(left_freq)
+	right = np.fft.ifft(right_freq)
 
-	return left_channel, right_channel
+	return left, right
+
+# def set_eq(left_channel, right_channel, pass_region, stop_region, framerate):	
+# 	'''We use the EQ set by NETEASE MUSIC, and we use ORDER-3 D1 SPLINE INTERPOLATION to simulate the filter function:
+# 		f(250)=f'(250)=0;
+# 		f(1000)=f'(1000)=0;
+# 		f(500)=1,f'(500)=0'''
+# 	'''We start with a linear transform of x'''
+# 	'''The solution of the problem is:
+# 		f1(x) = -2x^3+9x^2-12x+5, x = x0/250, 250<=x0<=500;
+# 		f2(x) = 3/4x^3-9/4x^2+6x-4, x = 0/250, 500<=x0<=1000.
+# 	'''
+# 	left_frequency = np.fft.fft(left_channel)
+# 	right_frequency = np.fft.fft(right_channel)
+# 	abs_left = abs(left_frequency)
+# 	abs_right = abs(right_frequency)
+# 	length = left_channel.size
+# 	freq = lambda i: i*framerate/(length*2)
+# 	index = lambda freq: int(2*length/framerate*freq)
+# 	#f1 = lambda x: 0.4*(-2*(x**3)+9*(x**2)-12*x+5)
+# 	#f2 = lambda x: 0.4*(0.75*(x**3)-2.25*(x**2)+6*x-4)
+
+# 	rate1 = 1
+# 	rate2 = 0.8
+
+# 	f1 = lambda x: rate1*(0.5*np.sin(np.pi*(x-1.5)) + 0.5)
+# 	f2 = lambda x: rate1*(0.5*np.sin(0.5*np.pi*(x-1)) + 0.5)
+
+# 	x250 = index(250)
+# 	x500 = index(500)
+# 	x1000 = index(1000)
+
+# 	left_frequency = left_frequency * rate2
+# 	right_frequency = right_frequency * rate2
+
+# 	left_frequency[x250:x500] = [left_frequency[i]*(1+(2-2*rate2)*f1(freq(i)/250)) for i in range(x250, x500)]
+# 	right_frequency[x250:x500] = [right_frequency[i]*(1+(2-2*rate2)*f1(freq(i)/250)) for i in range(x250, x500)]
+# 	left_frequency[x500:x1000] = [left_frequency[i]*(1+(2-2*rate2)*f2(freq(i)/250)) for i in range(x500, x1000)]
+# 	right_frequency[x500:x1000] = [right_frequency[i]*(1+(2-2*rate2)*f2(freq(i)/250)) for i in range(x500, x1000)]
+
+# 	left_channel = np.fft.ifft(left_frequency)
+# 	right_channel = np.fft.ifft(right_frequency)
+
+# 	return left_channel, right_channel
 
 
 
