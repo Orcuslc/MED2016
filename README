@@ -1,4 +1,4 @@
-# README
+# The Word2Vec Server is forked from https://github.com/3Top/word2vec-api, and did some changes to satisfy our needs.
 
 1. Installing kaldi:
 	1.1 git clone github.com/kaldi-asr/kaldi.git
