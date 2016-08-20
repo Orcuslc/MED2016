@@ -31,6 +31,11 @@ class Model(Resource):
 			self.vec = dict((name, val) for name, val in nvs)
 			# print(self.vec['the'])
 
+	def similarity(self, word1, word2):
+		word1 = self.vec[str(word1)]
+		word2 = self.vec[str(word2)]
+		return cosine_similarity(word1, word2)
+
 	def most_similar_concept(self, word, concept):
 		word = self.vec[str(word)]
 		type_vec = np.asarray([cosine_similarity(word, attr) for attr in concept.vec])
@@ -65,13 +70,23 @@ class Similar_Concept(Resource):
 		return model.similar_concept(word, concept)
 
 class Similarity(Resource):
-	pass
+	def get(self):
+		parser = reqparse.RequestParser()
+		parser.add_argument('w1', type=str, required=True, action='append')
+		parser.add_argument('w1', type=str, required=True, action='append')
+		args = parser.parse_args()
+		w1 = args.get('w1')[0]
+		w2 = args.get('w2')[0]
+		return model.similarity(w1, w2)
+
 
 class N_Similarity(Resource):
 	pass
 
 class Most_Similar(Resource):
 	pass
+
+class 
 
 
 app = Flask(__name__)
