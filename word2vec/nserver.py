@@ -64,7 +64,14 @@ class Similar_Concept(Resource):
 		word = args.get('word')[0]
 		return model.similar_concept(word, concept)
 
+class Similarity(Resource):
+	pass
 
+class N_Similarity(Resource):
+	pass
+
+class Most_Similar(Resource):
+	pass
 
 
 app = Flask(__name__)
