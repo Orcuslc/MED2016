@@ -1,3 +1,0 @@
-Word2Vec API
-===
-The Server-Client module is forked from https://github.com/3Top/word2vec-api/blob/master/word2vec-api.py, and added some functions to satisfy our needs.
