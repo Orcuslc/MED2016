@@ -31,10 +31,15 @@ class Model(Resource):
 			self.vec = dict((name, val) for name, val in nvs)
 			# print(self.vec['the'])
 
-	def similar_concept(self, word, concept):
+	def most_similar_concept(self, word, concept):
 		word = self.vec[str(word)]
 		type_vec = np.asarray([cosine_similarity(word, attr) for attr in concept.vec])
 		return(concept.vocab[type_vec.argmax(0)])
+
+	def similar_concept(self, word, concept):
+		word = self.vec[str(word)]
+		type_vec = np.asarray([cosine_similarity(word, attr) for attr in concept.vec])
+		return type_vec
 
 class Concept(Resource):
 	def __init__(self, path):
@@ -42,6 +47,14 @@ class Concept(Resource):
 			lines = f.read().split('\n')[:-1]
 			self.vocab = lines
 			self.vec = [model.vec[word] for word in self.vocab]
+
+class Most_Similar_Concept(Resource):
+	def get(self):
+		parser = reqparse.RequestParser()
+		parser.add_argument('word', type=str, required=True, action='append')
+		args = parser.parse_args()
+		word = args.get('word')[0]
+		return model.most_similar_concept(word, concept)
 
 class Similar_Concept(Resource):
 	def get(self):
@@ -72,6 +85,7 @@ if __name__ == '__main__':
 	model = Model(args.model)
 	concept = Concept(args.concept)
 
+	api.add_resource(Most_Similar_Concept, path+'/msc')
 	api.add_resource(Similar_Concept, path+'/sc')
 	app.run(host=host, port=port)
 
