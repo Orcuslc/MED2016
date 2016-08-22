@@ -1,48 +1,52 @@
 import sys, time, subprocess
 
-method = sys.argv[1]
-word_path = sys.argv[2]
+def word2vec(method, word_path, result_path):
+	start = time.time()
 
-if len(sys.argv) == 4:
-	result_path = sys.argv[3]
-else:
-	result_path = './results'
+	# word_path = './words'
+	# result_path = './results'
 
-start = time.time()
+	with open(word_path, 'r') as f:
+		# As the extract_keywords.py would bring another '\n' in the end.
+		words = f.read().split('\n')[:-1]
+		# print(len(words))
+	f.close()
+	result = []
 
-# word_path = './words'
-# result_path = './results'
+	if method == 'msc':
+		for word in words:
+			cmd = 'curl http://127.0.0.1:5000/word2vec/msc?word=' + word
+			p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+			r = p.wait()
+			(stdoutput, erroutput) = p.communicate()
+			stdoutput = stdoutput.decode('utf-8')
+			# print(stdoutput.split('\n'))
+			result.append(stdoutput.split('\n')[-2])
+	elif method == 'sc':
+		for word in words:
+			cmd = 'curl http://127.0.0.1:5000/word2vec/sc?word=' + word
+			p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+			r = p.wait()
+			(stdoutput, erroutput) = p.communicate()
+			stdoutput = stdoutput.decode('utf-8')
+			# print(stdoutput.split('\n'))
+			result.append(stdoutput.split('\n')[-2])
 
-with open(word_path, 'r') as f:
-	# As the extract_keywords.py would bring another '\n' in the end.
-	words = f.read().split('\n')[:-1]
-	print(len(words))
-f.close()
-result = []
+	with open(result_path, 'w') as f:
+		for item in result:
+			f.write(item+'\n')
+	f.close()
 
-if method == 'msc':
-	for word in words:
-		cmd = 'curl http://127.0.0.1:5000/word2vec/msc?word=' + word
-		p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-		r = p.wait()
-		(stdoutput, erroutput) = p.communicate()
-		stdoutput = stdoutput.decode('utf-8')
-		# print(stdoutput.split('\n'))
-		result.append(stdoutput.split('\n')[-2])
-elif method == 'sc':
-	for word in words:
-		cmd = 'curl http://127.0.0.1:5000/word2vec/sc?word=' + word
-		p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-		r = p.wait()
-		(stdoutput, erroutput) = p.communicate()
-		stdoutput = stdoutput.decode('utf-8')
-		# print(stdoutput.split('\n'))
-		result.append(stdoutput.split('\n')[-2])
+	end = time.time()
+	# print(end - start)
 
-with open(result_path, 'w') as f:
-	for item in result:
-		f.write(item+'\n')
-f.close()
+if __name__ == '__main__':
+	method = sys.argv[1]
+	word_path = sys.argv[2]
 
-end = time.time()
-print(end - start)
+	if len(sys.argv) == 4:
+		result_path = sys.argv[3]
+	else:
+		result_path = './results'
+
+	word2vec(method, word_path, result_path)
