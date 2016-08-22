@@ -1,4 +1,5 @@
 import sys, time, subprocess
+from nltk_extract.extract_stem import *
 
 def word2vec(method, word_path, result_path):
 	start = time.time()
@@ -19,18 +20,36 @@ def word2vec(method, word_path, result_path):
 			p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 			r = p.wait()
 			(stdoutput, erroutput) = p.communicate()
-			stdoutput = stdoutput.decode('utf-8')
+			stdoutput = stdoutput.decode('utf-8').split('\n')[-2]
 			# print(stdoutput.split('\n'))
-			result.append(stdoutput.split('\n')[-2])
+			if stdoutput == '0':
+				word = extract(word)
+				cmd = 'curl http://127.0.0.1:5000/word2vec/msc?word=' + word
+				p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+				r = p.wait()
+				(stdoutput, erroutput) = p.communicate()
+				stdoutput = stdoutput.decode('utf-8').split('\n')[-2]
+			result.append(stdoutput)
 	elif method == 'sc':
 		for word in words:
 			cmd = 'curl http://127.0.0.1:5000/word2vec/sc?word=' + word
 			p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 			r = p.wait()
 			(stdoutput, erroutput) = p.communicate()
-			stdoutput = stdoutput.decode('utf-8')
+			stdoutput = stdoutput.decode('utf-8').split('\n')[-2]
 			# print(stdoutput.split('\n'))
-			result.append(stdoutput.split('\n')[-2])
+			if stdoutput == '0':
+				t1 = time.time()
+				word = extract(word)
+				t2 = time.time()
+				print t2-t1
+				cmd = 'curl http://127.0.0.1:5000/word2vec/sc?word=' + word
+				p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+				r = p.wait()
+				(stdoutput, erroutput) = p.communicate()
+				stdoutput = stdoutput.decode('utf-8').split('\n')[-2]
+			result.append(stdoutput)
+	# print(result)
 
 	with open(result_path, 'w') as f:
 		for item in result:
