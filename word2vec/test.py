@@ -14,6 +14,7 @@ start = time.time()
 # result_path = './results'
 
 with open(word_path, 'r') as f:
+	# As the extract_keywords.py would bring another '\n' in the end.
 	words = f.read().split('\n')[:-1]
 	print(len(words))
 f.close()

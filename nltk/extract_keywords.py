@@ -106,4 +106,6 @@ if __name__ == '__main__':
     print result
     with open(result_path, 'w') as f:
         for word in result:
-            f.write(word+'\n')
+        	words = word.split(' ')
+        	for single_word in words:
+            	f.write(single_word+'\n')
