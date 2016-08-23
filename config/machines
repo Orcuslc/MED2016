@@ -24,5 +24,14 @@ dev6 - imc7 - ok - ok
 dev7 - imc8 - ok - ok
 dev8 - imc9 - ok - ok
 dev9 - imc10 - ok - ok
-dev11 - bigvid01 - ok
-dev15 - bigvid05 - ok
+dev11 - bigvid01 - ok ###
+dev15 - bigvid05 - ok ###
+=====================================
+
+=====================================
+extract_keywords:
+training-1: 3017: dev1: Done
+training-2: 4888: dev2: running
+test-1: 26730: dev1 - running
+test-2: 97399: dev2, dev3, dev4, dev5 - running
+test-3: 95298: dev6, dev7, dev8, dev9 - running

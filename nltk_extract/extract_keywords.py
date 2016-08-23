@@ -95,7 +95,7 @@ class NPExtractor(object):
 #     print ("This sentence is about: %s" % ", ".join(result))
 
 def handle_sentence(sentence):
-	nonsense = ['uh', 'huh', 'mm', 'uh-huh', 'mhm', 'I', "I'm", 'oh', 'i', "i'm", 'um']
+	nonsense = ['uh', 'huh', 'mm', 'uh-huh', 'mhm', 'I', "I'm", 'oh', 'i', "i'm", 'um', '<unk>']
 	sound = ['[noise]', '[laughter]']
 	words = sentence.split(' ')
 	nsentence = []
