@@ -1,0 +1,6 @@
+../.git ../ASR
+../config ../filter
+../nltk_extract ../nohup.out
+../README ../scripts
+../test ../word2vec
+../__init__.py ../__pycache__

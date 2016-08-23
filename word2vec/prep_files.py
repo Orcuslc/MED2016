@@ -6,7 +6,8 @@ n = int(sys.argv[3])
 
 def prep(n, files_path, result_path):
 	files_list = os.listdir(files_path)
-	print(files_list)
+	files_list = [files_path+i for i in files_list]
+	# print(files_list)
 	with open(result_path, 'a+') as f:
 		for i in range(len(files_list) // n):
 			f.write(' '.join(files_list[n*i:n*(i+1)]) + '\n')
