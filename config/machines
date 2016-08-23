@@ -31,7 +31,12 @@ dev15 - bigvid05 - ok ###
 =====================================
 extract_keywords:
 training-1: 3017: dev1: Done
-training-2: 4888: dev2: running
-test-1: 26730: dev1 - running
-test-2: 97399: dev2, dev3, dev4, dev5 - running
-test-3: 95298: dev6, dev7, dev8, dev9 - running
+training-2: 4888: dev2: running Done	
+test-1: 26730: dev1 - running Done
+test-2: 97399: dev2, dev3, dev4, dev5 - running - Done
+test-3: 95298: dev6, dev7, dev8, dev9 - running Done
+=====================================
+
+=====================================
+Word2Vec:
+n = 1000
