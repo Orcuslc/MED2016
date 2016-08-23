@@ -1,6 +1,8 @@
 import nltk
 from nltk.corpus import brown
 import sys
+# REVISED By Orcuslc for MED2016
+# August, 2016
 # This is a fast and simple noun phrase extractor (based on NLTK)
 # Feel free to use it, just keep a link back to this post
 # http://thetokenizer.com/2013/05/09/efficient-way-to-extract-the-main-topics-of-a-sentence/
@@ -92,14 +94,31 @@ class NPExtractor(object):
 #     result = np_extractor.extract()
 #     print ("This sentence is about: %s" % ", ".join(result))
 
+def handle_sentence(sentence):
+	nonsense = ['uh', 'huh', 'mm', 'uh-huh', 'mhm', 'I', "I'm", 'oh', 'i', "i'm", 'um']
+	sound = ['[noise]', '[laughter]']
+	words = sentence.split(' ')
+	nsentence = []
+	for word in words:
+		if word not in nonsense:
+			if word not in sound:
+				nsentence.append(word)
+			else:
+				word = word[1:-1]
+				nsentence.append(word)
+	return ' '.join(nsentence)
+
+
 def extract_(sentence_path, key_words_path):
 	with open(sentence_path) as f:
 		sentence = f.read()
 	f.close()
+	sentence = handle_sentence(sentence)
+	print(sentence)
 	np_extractor = NPExtractor(sentence)
 	result = np_extractor.extract()
 	print result
-	with open(result_path, 'w') as f:
+	with open(key_words_path, 'w') as f:
 		for word in result:
 			words = word.split(' ')
 			for single_word in words:
